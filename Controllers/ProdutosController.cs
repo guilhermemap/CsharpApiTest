@@ -19,7 +19,7 @@ public class ProdutosController(AppDbContext appDbContext) : ControllerBase
     }
     return produtos;
   }
-  [HttpGet("{id:int}", Name = "ObterProduto")]
+  [HttpGet("{id:int:min(1)}", Name = "ObterProduto")]
   public ActionResult<Produto> Get(int id)
   {
     var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
@@ -39,7 +39,7 @@ public class ProdutosController(AppDbContext appDbContext) : ControllerBase
     _context.SaveChanges();
     return new CreatedAtRouteResult("ObterProduto", new { id = produto.ProdutoId }, produto);
   }
-  [HttpPut("{id:int}")]
+  [HttpPut("{id:int:min(1)}")]
   public ActionResult Put(int id, Produto produto)
   {
     if (id != produto.ProdutoId)
@@ -48,7 +48,7 @@ public class ProdutosController(AppDbContext appDbContext) : ControllerBase
     _context.SaveChanges();
     return Ok(produto);
   }
-  [HttpDelete("{id:int}")]
+  [HttpDelete("{id:int:min(1)}")]
   public ActionResult Delete(int id)
   {
     var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);

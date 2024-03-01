@@ -24,7 +24,7 @@ public class CategoriasController(AppDbContext appDbContext) : ControllerBase
     }
     return categorias;
   }
-  [HttpGet("{id:int}", Name = "ObterCategoria")]
+  [HttpGet("{id:int:min(1)}", Name = "ObterCategoria")]
   public ActionResult<Categoria> Get(int id)
   {
     var categoria = _context.Categorias.FirstOrDefault(c => c.CategoriaId == id);
@@ -44,7 +44,7 @@ public class CategoriasController(AppDbContext appDbContext) : ControllerBase
     _context.SaveChanges();
     return new CreatedAtRouteResult("ObterCategoria", new { id = categoria.CategoriaId }, categoria);
   }
-  [HttpPut("{id:int}")]
+  [HttpPut("{id:int:min(1)}")]
   public ActionResult Put(int id, Categoria categoria)
   {
     if (id != categoria.CategoriaId)
@@ -53,7 +53,7 @@ public class CategoriasController(AppDbContext appDbContext) : ControllerBase
     _context.SaveChanges();
     return Ok(categoria);
   }
-  [HttpDelete("{id:int}")]
+  [HttpDelete("{id:int:min(1)}")]
   public ActionResult Delete(int id)
   {
     var categoria = _context.Categorias.FirstOrDefault(c => c.CategoriaId == id);
