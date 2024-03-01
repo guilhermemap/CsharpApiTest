@@ -10,14 +10,14 @@ public class CategoriasController(AppDbContext appDbContext) : ControllerBase
 {
   readonly AppDbContext _context = appDbContext;
   [HttpGet("produtos")]
-  public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
+  public async Task<ActionResult<IEnumerable<Categoria>>> GetCategoriasProdutos()
   {
-    return _context.Categorias.Include(c => c.Produtos).ToList();
+    return await _context.Categorias.Include(c => c.Produtos).ToListAsync();
   }
   [HttpGet]
-  public ActionResult<IEnumerable<Categoria>> Get()
+  public async Task<ActionResult<IEnumerable<Categoria>>> Get()
   {
-    var categorias = _context.Categorias.ToList();
+    var categorias = await _context.Categorias.ToListAsync();
     if (categorias is null)
     {
       return NotFound("Nenhum produto encontrado?");
@@ -25,9 +25,9 @@ public class CategoriasController(AppDbContext appDbContext) : ControllerBase
     return categorias;
   }
   [HttpGet("{id:int:min(1)}", Name = "ObterCategoria")]
-  public ActionResult<Categoria> Get(int id)
+  public async Task<ActionResult<Categoria>> Get(int id)
   {
-    var categoria = _context.Categorias.FirstOrDefault(c => c.CategoriaId == id);
+    var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.CategoriaId == id);
     if (categoria is null)
     {
       return NotFound("Produto não encontrado...");
@@ -35,28 +35,28 @@ public class CategoriasController(AppDbContext appDbContext) : ControllerBase
     return categoria;
   }
   [HttpPost]
-  public ActionResult Post(Categoria categoria)
+  public async Task<ActionResult> Post(Categoria categoria)
   {
     /* validação feita automaticamente por ser [ApiController] */
     if (categoria is null)
       return BadRequest("erro com o produto");
     _context.Categorias.Add(categoria);
-    _context.SaveChanges();
+    await _context.SaveChangesAsync();
     return new CreatedAtRouteResult("ObterCategoria", new { id = categoria.CategoriaId }, categoria);
   }
   [HttpPut("{id:int:min(1)}")]
-  public ActionResult Put(int id, Categoria categoria)
+  public async Task<ActionResult> Put(int id, Categoria categoria)
   {
     if (id != categoria.CategoriaId)
       return BadRequest("Conflito de Id...");
     _context.Entry(categoria).State = EntityState.Modified;
-    _context.SaveChanges();
+    await _context.SaveChangesAsync();
     return Ok(categoria);
   }
   [HttpDelete("{id:int:min(1)}")]
-  public ActionResult Delete(int id)
+  public async Task<ActionResult> Delete(int id)
   {
-    var categoria = _context.Categorias.FirstOrDefault(c => c.CategoriaId == id);
+    var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.CategoriaId == id);
     if (categoria is null)
     {
       return NotFound("Produto não encontrado...");

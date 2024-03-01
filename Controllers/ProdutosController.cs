@@ -10,9 +10,9 @@ public class ProdutosController(AppDbContext appDbContext) : ControllerBase
 {
   readonly AppDbContext _context = appDbContext;
   [HttpGet]
-  public ActionResult<IEnumerable<Produto>> Get()
+  public async Task<ActionResult<IEnumerable<Produto>>> Get()
   {
-    var produtos = _context.Produtos.ToList();
+    var produtos = await _context.Produtos.ToListAsync();
     if (produtos is null)
     {
       return NotFound("Nenhum produto encontrado?");
@@ -20,9 +20,9 @@ public class ProdutosController(AppDbContext appDbContext) : ControllerBase
     return produtos;
   }
   [HttpGet("{id:int:min(1)}", Name = "ObterProduto")]
-  public ActionResult<Produto> Get(int id)
+  public async Task<ActionResult<Produto>> Get(int id)
   {
-    var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+    var produto = await _context.Produtos.FirstOrDefaultAsync(p => p.ProdutoId == id);
     if (produto is null)
     {
       return NotFound("Produto não encontrado...");
@@ -30,28 +30,28 @@ public class ProdutosController(AppDbContext appDbContext) : ControllerBase
     return produto;
   }
   [HttpPost]
-  public ActionResult Post(Produto produto)
+  public async Task<ActionResult> Post(Produto produto)
   {
     /* validação feita automaticamente por ser [ApiController] */
     if (produto is null)
       return BadRequest("erro com o produto");
     _context.Produtos.Add(produto);
-    _context.SaveChanges();
+    await _context.SaveChangesAsync();
     return new CreatedAtRouteResult("ObterProduto", new { id = produto.ProdutoId }, produto);
   }
   [HttpPut("{id:int:min(1)}")]
-  public ActionResult Put(int id, Produto produto)
+  public async Task<ActionResult> Put(int id, Produto produto)
   {
     if (id != produto.ProdutoId)
       return BadRequest("Conflito de Id...");
     _context.Entry(produto).State = EntityState.Modified;
-    _context.SaveChanges();
+    await _context.SaveChangesAsync();
     return Ok(produto);
   }
   [HttpDelete("{id:int:min(1)}")]
-  public ActionResult Delete(int id)
+  public async Task<ActionResult> Delete(int id)
   {
-    var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+    var produto = await _context.Produtos.FirstOrDefaultAsync(p => p.ProdutoId == id);
     if (produto is null)
     {
       return NotFound("Produto não encontrado...");
